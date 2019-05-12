@@ -41,6 +41,19 @@ func Getenv(ctx context.Context, key string) string {
 	return val
 }
 
+// WithEnviron creates a new context whose local environment is exactly as
+// given, ignoring any existing entries in the parent context.
+//
+// This might be useful if you need to fully-control the environment variable
+// table for a unit test, for example.
+func WithEnviron(ctx context.Context, e []string) context.Context {
+	// If we use the caller's slice then they would be able to mutate it,
+	// so we'll copy it.
+	ourE := make([]string, len(e))
+	copy(ourE, e)
+	return withEnviron(ctx, ourE)
+}
+
 // Setenv creates a new context whose local environment is the same as the
 // given context except for overriding the given variable name with the given
 // value.
